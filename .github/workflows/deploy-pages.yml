@@ -12,13 +12,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Pages
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Build the Project (Optional)
+        run: |
+          # If you have any build process, you can define it here.
+          # Example: 
+          # python setup.py build
+          echo "Build step if required"
+
+      - name: Configure Pages
         uses: actions/configure-pages@v3
 
-      - name: Upload artifact
+      - name: Upload artifact to GitHub Pages
         uses: actions/upload-pages-artifact@v2
         with:
-          path: .
+          path: . # This assumes your HTML content is in the root folder.
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v2
