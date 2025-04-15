@@ -1,4 +1,4 @@
-name: Python CI Kanika
+name: Python CI and Deploy
 
 on:
   push:
@@ -9,26 +9,48 @@ on:
       - main
 
 jobs:
-  test:
+  test_and_deploy:
     runs-on: ubuntu-latest
+
     steps:
+      # Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      - name: Install system dependencies (e.g., nginx)
+      # Install system dependencies (e.g., nginx)
+      - name: Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y nginx
 
+      # Install Python dependencies
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # Run the tests using pytest
       - name: Run Tests
-        run: pytest
+        run: |
+          pytest
+
+      # If tests pass, deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        if: success() # Only run deploy step if tests pass
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact to GitHub Pages
+        if: success() # Only upload if tests pass
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: . # Change this if your static files are in a different directory
+
+      - name: Deploy to GitHub Pages
+        if: success() # Only deploy if tests pass
+        uses: actions/deploy-pages@v2
